@@ -1,33 +1,63 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native'
-import React from 'react'
+import React,{useState} from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../Components/contactSlice';
+import { v4 as uuidv4 } from 'uuid';
 
-const AddContacts = () => {
+
+let nextId = 1;
+const AddContacts = ({navigation}) => {
+
+    const dispatch = useDispatch(); // Define dispatch
+
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+
+
+const handleSave = () => {
+    const id = nextId++;
+    // Dispatch action to add the contact
+    dispatch(addContact({id, name, phoneNumber, email, address }));
+    // Navigate back to the contact screen
+    navigation.navigate('ContactScreen');
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>New Contact</Text>
+        <View style={{flexDirection:'row', alignItems:'center', marginTop:20}}>
+        <TouchableOpacity style={{marginLeft:10}} onPress={() => navigation.navigate('ContactScreen')} activeOpacity={0.5}
+        ><AntDesign name="arrowleft" size={30} color="white" /></TouchableOpacity>
+        <Text style={styles.text}>New Contact</Text>
+        </View>
       {/* view for contact photo and edit */}
-      <View style={styles.image}>
-      <Ionicons name="person-circle-outline" size={90} color="white"  />
-      <TouchableOpacity style={styles.pen}>
-      <FontAwesome5 name="pen" size={14} color="white" />
-      </TouchableOpacity>
-      
-      </View>
-      {/* section for inputting contact details  */}
-      <View style={styles.form}>
+        <View style={styles.image}>
+        <Ionicons name="person-circle-outline" size={90} color="white"  />
+        <TouchableOpacity style={styles.pen} activeOpacity={0.4}>
+        <FontAwesome5 name="pen" size={14} color="white" />
+        </TouchableOpacity>
+        
+        </View>
+        {/* section for inputting contact details  */}
+        <View style={styles.form}>
         <View style={styles.textinput}> 
         <Ionicons name="person-circle-outline" size={24} color="#051fb0"  />
-        <TextInput placeholder='Name' style={{fontWeight:'600', padding:10}} />
+        <TextInput placeholder='Name' style={{fontWeight:'600', padding:10}}
+         value={name} 
+         onChangeText={setName}  />
         </View>
 
         <View style={styles.textinput}> 
         <Feather name="phone" size={24} color="#051fb0" />
-        <TextInput placeholder='+233-5628-773-434' style={{fontWeight:'600', padding:10}} />
+        <TextInput placeholder='+233-5628-773-434' style={{fontWeight:'600', padding:10}} 
+         value={phoneNumber} 
+         onChangeText={setPhoneNumber} />
         </View>
 
         <View style={styles.textinput}> 
@@ -41,13 +71,14 @@ const AddContacts = () => {
         </View>
         {/*  Action buttons*/}
         <View style={styles.btns}>
-            <TouchableOpacity style={styles.CancelButton}>
+            <TouchableOpacity style={styles.CancelButton} activeOpacity={0.4}
+            onPress={() => navigation.navigate('ContactScreen')}>
                 <Text style={{color:'#051fb0',fontSize:18,fontWeight:'bold',padding:8}}>
                     Cancel
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.ConfirmButton}>
+            <TouchableOpacity style={styles.ConfirmButton} activeOpacity={0.4} onPress={handleSave}>
                 <Text style={{color:'white',fontSize:18,fontWeight:'bold',padding:8}}>
                     Save
                 </Text>
@@ -72,7 +103,7 @@ const styles = StyleSheet.create({
         fontSize:24,
         fontWeight:'500',
         marginLeft:15,
-        marginTop:20
+        
     },
     image:{
         height:150,
